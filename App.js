@@ -1,7 +1,19 @@
 import React, { Component } from 'react';
+import {createAppContainer} from 'react-navigation';
+import {createStackNavigator} from 'react-navigation-stack';
 import { Alert, Button, TextInput, View, StyleSheet } from 'react-native';
 
-export default class App extends Component {
+const MainNavigator = createStackNavigator({
+  LoginPage: {screen: Login}
+}, {
+  initialRouteName: 'LoginPage',
+});
+
+const App = createAppContainer(MainNavigator);
+
+export default App;
+
+class Login extends Component {
   constructor(props) {
     super(props);
     
@@ -18,11 +30,12 @@ export default class App extends Component {
   }
 
   render() {
+    const {navigate} = this.props.navigation;
     return (
       <View style={styles.container}>
         <TextInput
           value={this.state.username}
-          onChangeText={(username) => this.setState({ username })}
+          onChangeText={(username) => this.setState({ username: username })}
           placeholder={'Username'}
           style={styles.input}
         />
@@ -37,8 +50,9 @@ export default class App extends Component {
         <Button
           title={'Login'}
           style={styles.input}
-          onPress={this.onLogin.bind(this)}
+          onPress={() => navigate('LandingPage',{})}
         />
+
       </View>
     );
   }
