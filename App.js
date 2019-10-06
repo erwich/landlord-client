@@ -1,17 +1,7 @@
 import React, { Component } from 'react';
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
-import { Alert, Button, TextInput, View, StyleSheet } from 'react-native';
-
-const MainNavigator = createStackNavigator({
-  LoginPage: {screen: Login}
-}, {
-  initialRouteName: 'LoginPage',
-});
-
-const App = createAppContainer(MainNavigator);
-
-export default App;
+import { Alert, Button, TextInput, View, StyleSheet, Text } from 'react-native';
 
 class Login extends Component {
   constructor(props) {
@@ -24,13 +14,20 @@ class Login extends Component {
   }
   
   onLogin() {
-    const { username, password } = this.state;
+    const username = this.state.username,
+          password = this.state.password;
 
-    Alert.alert('Credentials', `${username} + ${password}`);
+    const navigate = this.props.navigation.navigate;
+
+    fetch('http://example.com').then(response => {
+      response.text().then(text => {
+        Alert.alert('Response', `${text}`);
+        navigate('LandingPage', {});
+      });
+    });
   }
 
   render() {
-    const {navigate} = this.props.navigation;
     return (
       <View style={styles.container}>
         <TextInput
@@ -50,10 +47,18 @@ class Login extends Component {
         <Button
           title={'Login'}
           style={styles.input}
-          onPress={() => navigate('LandingPage',{})}
+          onPress={() => this.onLogin()}
         />
 
       </View>
+    );
+  }
+}
+
+class LandingPage extends Component {
+  render() {
+    return (
+      <Text>Landing Page!</Text>
     );
   }
 }
@@ -74,3 +79,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
+
+const MainNavigator = createStackNavigator({
+  LoginPage: { screen: Login },
+  LandingPage: { screen: LandingPage },
+}, {
+  initialRouteName: 'LoginPage',
+});
+
+const App = createAppContainer(MainNavigator);
+
+export default App;
